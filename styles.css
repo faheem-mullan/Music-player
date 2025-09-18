@@ -80,7 +80,7 @@ ul {
 .parallel-lines {
   display: flex;
   flex-wrap: wrap;
-  row-gap: px;
+  row-gap: 6px;
   padding: 0 5px;
 }
 
