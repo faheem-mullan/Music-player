@@ -71,8 +71,9 @@ let userData={
     songCurrenttime:0,
   };
 
-  const renderSongs=(array) =>{
-    const songHTML =array.map((song))=>{
+  const renderSongs = (array) => {
+  const songsHTML = array
+    .map((song)=> {
       return `
       <li id="song-${song.id}" class="playlist-song">
       <button class="playlist-song-info">
@@ -86,5 +87,18 @@ let userData={
         </button>
       </li>
       `;
+    })
+    .join("");
+ 
+  playlistSongs.innerHTML = songsHTML;
+};
+
+const sortsong()=>{
+  userData?.songs.sort((a,b)=>{
+    if (a.title<b.title){
+      return -1;
     }
-  }
+  
+
+
+renderSongs(userData?.songs);
