@@ -5,78 +5,118 @@ const nextButton = document.getElementById("next");
 const previousButton = document.getElementById("previous");
 const shuffleButton = document.getElementById("shuffle");
 
-    const songs = [
-  {
-    id: 0,
-    title: "Winterfell",
-    artist: "Ramin Djawadi",
-    duration: "2:49",
-    src: "https://archive.org/download/tvtunes_20712/Game%20of%20Thrones.mp3"
-  },
+const allSongs = [
   {
     id: 1,
-    title: "The Rains of Castamere",
-    artist: "Sigur Rós",
-    duration: "3:00",
-    src: "https://archive.org/download/tvtunes_28556/Game%20of%20Thrones%20-%20Mhysa%20-%20Theme%20Song.mp3"
+    title: "Main Title",
+    artist: "Ramin Djawadi",
+    duration: "1:46",
+    src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
   },
   {
     id: 2,
-    title: "Light of the Seven",
-    artist: "Ramin Djawadi",
-    duration: "6:00",
-    src: "https://archive.org/download/GameOfThronesSeason6Soundtrack/GameOfThronesSeason6Soundtrack-07-LightOfTheSeven.mp3"
+    title: "The Rains of Castamere",
+    artist: "The National",
+    duration: "2:23",
+    src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
   },
   {
     id: 3,
-    title: "The Night King",
+    title: "Light of the Seven",
     artist: "Ramin Djawadi",
-    duration: "3:45",
-    src: "https://archive.org/download/GameOfThronesSeason8Soundtrack/GameOfThronesSeason8Soundtrack-03-TheNightKing.mp3"
+    duration: "6:02",
+    src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
   },
   {
     id: 4,
-    title: "The Winds of Winter",
+    title: "Winterfell",
     artist: "Ramin Djawadi",
-    duration: "3:30",
-    src: "https://archive.org/download/GameOfThronesSeason8Soundtrack/GameOfThronesSeason8Soundtrack-04-TheWindsOfWinter.mp3"
+    duration: "2:25",
+    src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3"
   },
   {
     id: 5,
-    title: "Dracarys",
+    title: "The Night King",
     artist: "Ramin Djawadi",
-    duration: "4:10",
-    src: "https://archive.org/download/GameOfThronesSeason8Soundtrack/GameOfThronesSeason8Soundtrack-06-Dracarys.mp3"
+    duration: "3:38",
+    src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3"
   },
   {
     id: 6,
-    title: "Battle of the Bastards",
+    title: "Dracarys",
     artist: "Ramin Djawadi",
-    duration: "6:15",
-    src: "https://archive.org/download/GameOfThronesSeason6Soundtrack/GameOfThronesSeason6Soundtrack-10-BattleOfTheBastards.mp3"
+    duration: "2:47",
+    src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3"
   },
   {
     id: 7,
-    title: "The King's Arrival",
+    title: "The Winds of Winter",
     artist: "Ramin Djawadi",
-    duration: "2:50",
-    src: "https://archive.org/download/GameOfThronesSeason5Soundtrack/GameOfThronesSeason5Soundtrack-02-TheKingsArrival.mp3"
+    duration: "2:20",
+    src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3"
+  },
+  {
+    id: 8,
+    title: "The Bear and the Maiden Fair",
+    artist: "The Hold Steady",
+    duration: "2:56",
+    src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3"
+  },
+  {
+    id: 9,
+    title: "Power Is Power",
+    artist: "SZA, The Weeknd, Travis Scott",
+    duration: "3:23",
+    src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3"
+  },
+  {
+    id: 10,
+    title: "Jenny of Oldstones",
+    artist: "Florence + The Machine",
+    duration: "3:00",
+    src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3"
   }
 ];
 
-const audio = new Audio()
-let userData={
-    songs:[...songs],
-    currentsong:null,
-    songCurrenttime:0,
-  };
 
-  const renderSongs = (array) => {
+
+
+const audio = new Audio();
+let userData = {
+  songs: [...allSongs],
+  currentSong: null,
+  songCurrentTime: 0,
+};
+
+const playSong = (id) => {
+  const song = userData?.songs.find((song) => song.id === id);
+  audio.src = song.src;
+  audio.title = song.title;
+
+  if (userData?.currentSong === null || userData?.currentSong.id !== song.id) {
+    audio.currentTime = 0;
+  } else {
+    audio.currentTime = userData?.songCurrentTime;
+  }
+  userData.currentSong = song;
+  playButton.classList.add("playing");
+
+  audio.play();
+};
+
+const pauseSong = () => {
+  userData.songCurrentTime = audio.currentTime;
+  
+  playButton.classList.remove("playing");
+  audio.pause();
+};
+
+const renderSongs = (array) => {
   const songsHTML = array
     .map((song)=> {
       return `
       <li id="song-${song.id}" class="playlist-song">
-      <button class="playlist-song-info">
+      <button class="playlist-song-info" onclick="playSong(${song.id})">
           <span class="playlist-song-title">${song.title}</span>
           <span class="playlist-song-artist">${song.artist}</span>
           <span class="playlist-song-duration">${song.duration}</span>
@@ -89,21 +129,38 @@ let userData={
       `;
     })
     .join("");
- 
+
   playlistSongs.innerHTML = songsHTML;
 };
 
-const sortsong()=>{
-  userData?.songs.sort((a,b)=>{
-    if (a.title<b.title){
+const getCurrentSongIndex = () => {
+
+}
+
+playButton.addEventListener("click", () => {
+    if (userData?.currentSong === null) {
+    playSong(userData?.songs[0].id);
+  } else {
+    playSong(userData?.currentSong.id);
+  }
+});
+
+pauseButton.addEventListener("click",  pauseSong);
+
+const sortSongs = () => {
+  userData?.songs.sort((a,b) => {
+    if (a.title < b.title) {
       return -1;
     }
-    else if(a.title>b.title){
+
+    if (a.title > b.title) {
       return 1;
-    }else{
-      return 0l;
     }
-  
 
+    return 0;
+  });
 
-renderSongs(userData?.songs);
+  return userData?.songs;
+};
+
+renderSongs(sortSongs());
